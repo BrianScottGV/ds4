@@ -15,6 +15,9 @@ namespace Laboratorio12
 
         public double VelocidadMV { get; set; }
         public double TmpMovilUsado { get; set; }
+
+        private Logica logica = new Logica();
+
         public Form1()
         {
             InitializeComponent();
@@ -37,12 +40,40 @@ namespace Laboratorio12
 
         private void Resultado_Click(object sender, EventArgs e)
         {
-            TmpMovilUsado = Double.Parse(TiempoMovilUsado.Text);
         }
 
         private void VelocidadMovil_TextChanged(object sender, EventArgs e)
         {
-            double VelocidadMV = Double.Parse(VelocidadMovil.Text);
+             VelocidadMV = Double.Parse(VelocidadMovil.Text);
+        }
+
+        private void TextBoxResultado_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void BtnCalcular_Click(object sender, EventArgs e)
+        {
+            double resultado = logica.DistanciaRecorrida(VelocidadMV, TmpMovilUsado);
+            TextBoxResultado.Text = resultado.ToString();
+        }
+
+        private void TiempoMovilUsado_TextChanged(object sender, EventArgs e)
+        {
+            TmpMovilUsado = Double.Parse(TiempoMovilUsado.Text);
+        }
+
+        private void BtnLimpiar_Click(object sender, EventArgs e)
+        {
+            if (TextBoxResultado.Text != "")
+            {
+                TextBoxResultado.Text = "";
+            }
+        }
+
+        private void BtnCompilacion_Click(object sender, EventArgs e)
+        {
+            this.Close();
         }
     }
 }
