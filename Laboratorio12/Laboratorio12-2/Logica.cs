@@ -4,14 +4,14 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Laboratorio12
+namespace Laboratorio12_2
 {
     internal class Logica
     {
-
-        public double DistanciaRecorrida(double VelocidadMV, double TmpMovilUsado)
+        
+        public double PromedioNotas(double Nota1, double Nota2, double Nota3)
         {
-            return VelocidadMV * TmpMovilUsado;
+            return (Nota1 + Nota2 + Nota3) / 3;
         }
 
     }

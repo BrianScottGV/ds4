@@ -64,6 +64,7 @@
             this.TiempoMovilUsado.Name = "TiempoMovilUsado";
             this.TiempoMovilUsado.Size = new System.Drawing.Size(100, 20);
             this.TiempoMovilUsado.TabIndex = 2;
+            this.TiempoMovilUsado.TextChanged += new System.EventHandler(this.TiempoMovilUsado_TextChanged);
             // 
             // TextBoxResultado
             // 
@@ -71,6 +72,7 @@
             this.TextBoxResultado.Name = "TextBoxResultado";
             this.TextBoxResultado.Size = new System.Drawing.Size(100, 20);
             this.TextBoxResultado.TabIndex = 3;
+            this.TextBoxResultado.TextChanged += new System.EventHandler(this.TextBoxResultado_TextChanged);
             // 
             // VelocidadDelMovil
             // 
@@ -109,6 +111,7 @@
             this.BtnCalcular.TabIndex = 7;
             this.BtnCalcular.Text = "Calcular";
             this.BtnCalcular.UseVisualStyleBackColor = true;
+            this.BtnCalcular.Click += new System.EventHandler(this.BtnCalcular_Click);
             // 
             // BtnLimpiar
             // 
@@ -118,6 +121,7 @@
             this.BtnLimpiar.TabIndex = 8;
             this.BtnLimpiar.Text = "Limpiar";
             this.BtnLimpiar.UseVisualStyleBackColor = true;
+            this.BtnLimpiar.Click += new System.EventHandler(this.BtnLimpiar_Click);
             // 
             // BtnCompilacion
             // 
@@ -125,8 +129,9 @@
             this.BtnCompilacion.Name = "BtnCompilacion";
             this.BtnCompilacion.Size = new System.Drawing.Size(75, 23);
             this.BtnCompilacion.TabIndex = 9;
-            this.BtnCompilacion.Text = "Compilar";
+            this.BtnCompilacion.Text = "Cerrar";
             this.BtnCompilacion.UseVisualStyleBackColor = true;
+            this.BtnCompilacion.Click += new System.EventHandler(this.BtnCompilacion_Click);
             // 
             // Form1
             // 
