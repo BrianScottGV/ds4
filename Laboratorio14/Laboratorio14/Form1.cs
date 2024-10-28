@@ -15,6 +15,7 @@ namespace Laboratorio14
             InitializeComponent();
         }
 
+
         private void Form1_Load(object sender, EventArgs e)
         {
             tsbNuevo.Enabled = true;
