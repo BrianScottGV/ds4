@@ -1,21 +1,15 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
 using System.Data;
 using System.Data.SqlClient;
+using System.Windows.Forms;
 
 namespace Laboratorio14
 {
     public partial class frmProductos : Form
     {
-        string connectionString = @"Server=.\sqlexpress;Database=productos;Trusted_Connection=True;";
+        string connectionString = @"Server=.\sqlexpress;Database=Productos;Trusted_Connection=True;";
         bool nuevo;
+
         public frmProductos()
         {
             InitializeComponent();
@@ -51,70 +45,57 @@ namespace Laboratorio14
 
         private void tsbGuardar_Click(object sender, EventArgs e)
         {
-            if (nuevo)
+            using (SqlConnection con = new SqlConnection(connectionString))
             {
-                string sql = "INSERT INTO LAPTOPS (NOMBRE, PRECIO, STOCK)" +
-                    "VALUES ('" + txtNombre.Text + "','" + txtPrecio.Text + "','" + txtStock.Text + "')'";
+                string sql;
 
-                SqlConnection con = new SqlConnection(sql);
-                SqlCommand cmd = new SqlCommand(sql, con);
+                if (nuevo)
+                {
+                    sql = "INSERT INTO LAPTOPS (NOMBRE, PRECIO, STOCK) VALUES (@Nombre, @Precio, @Stock)";
+                }
+                else
+                {
+                    sql = "UPDATE LAPTOPS SET NOMBRE = @Nombre, PRECIO = @Precio, STOCK = @Stock WHERE id = @Id";
+                }
 
-                cmd.CommandType = CommandType.Text;
-                con.Open();
-                try
+                using (SqlCommand cmd = new SqlCommand(sql, con))
                 {
-                    int i = cmd.ExecuteNonQuery();
-                    if (i > 0)
-                        MessageBox.Show("Registro ingresado correctamente!");
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show("Error: " + ex.ToString());
-                }
-                finally
-                {
-                    con.Close();
+                    cmd.Parameters.AddWithValue("@Nombre", txtNombre.Text);
+                    cmd.Parameters.AddWithValue("@Precio", txtPrecio.Text);
+                    cmd.Parameters.AddWithValue("@Stock", txtStock.Text);
+
+                    if (!nuevo)
+                    {
+                        cmd.Parameters.AddWithValue("@Id", txtId.Text);
+                    }
+
+                    try
+                    {
+                        con.Open();
+                        int i = cmd.ExecuteNonQuery();
+                        if (i > 0)
+                            MessageBox.Show(nuevo ? "Registro ingresado correctamente!" : "Registro actualizado correctamente!");
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show("Error: " + ex.ToString());
+                    }
                 }
             }
-            else
-            {
-                string sql = "UPDATE LAPTOPS SET NOMBRE'" + txtNombre.Text + 
-                    "', PRECIO='" + txtPrecio.Text +
-                    "', " + "STOCK='" + txtStock.Text + "'WHERE id=" + txtId.Text + "";
 
-                SqlConnection con = new SqlConnection(connectionString);
-                SqlCommand cmd = new SqlCommand(sql, con);
-                cmd.CommandType = CommandType.Text;
-                con.Open();
-
-                try
-                {
-                    int i = cmd.ExecuteNonQuery();
-                    if (i > 0)
-                        MessageBox.Show("Registro actualizado correctamente");
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show("Error: " + ex.ToString());
-                }
-                finally
-                {
-                    con.Close();
-                }
-                tsbNuevo.Enabled = true;
-                tsbGuardar.Enabled = false;
-                tsbCancelar.Enabled = false;
-                tsbEliminar.Enabled = false;
-                tstId.Enabled = true;
-                tsbBuscar.Enabled = true;
-                txtNombre.Enabled = false;
-                txtPrecio.Enabled = false;
-                txtStock.Enabled = false;
-                txtId.Text = "";
-                txtNombre.Text = "";
-                txtPrecio.Text = "";
-                txtStock.Text = "";
-            }
+            tsbNuevo.Enabled = true;
+            tsbGuardar.Enabled = false;
+            tsbCancelar.Enabled = false;
+            tsbEliminar.Enabled = false;
+            tstId.Enabled = true;
+            tsbBuscar.Enabled = true;
+            txtNombre.Enabled = false;
+            txtPrecio.Enabled = false;
+            txtStock.Enabled = false;
+            txtId.Text = "";
+            txtNombre.Text = "";
+            txtPrecio.Text = "";
+            txtStock.Text = "";
         }
 
         private void tsbCancelar_Click(object sender, EventArgs e)
@@ -136,29 +117,26 @@ namespace Laboratorio14
 
         private void tsbEliminar_Click(object sender, EventArgs e)
         {
-            string sql = "delete from LAPTOPS where id='" +
-                this.txtId.Text + "';";
+            string sql = "DELETE FROM LAPTOPS WHERE id = @Id";
 
-            SqlConnection con = new SqlConnection(connectionString);
-            SqlCommand cmd = new SqlCommand(sql, con);
+            using (SqlConnection con = new SqlConnection(connectionString))
+            using (SqlCommand cmd = new SqlCommand(sql, con))
+            {
+                cmd.Parameters.AddWithValue("@Id", txtId.Text);
 
-            cmd.CommandType = CommandType.Text;
-            con.Open();
+                try
+                {
+                    con.Open();
+                    int i = cmd.ExecuteNonQuery();
+                    if (i > 0)
+                        MessageBox.Show("Registro eliminado correctamente !");
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Error: " + ex.ToString());
+                }
+            }
 
-            try
-            {
-                int i = cmd.ExecuteNonQuery();
-                if (i > 0)
-                    MessageBox.Show("Registro eliminado correctamente !");
-            }
-            catch(Exception ex)
-            {
-                MessageBox.Show("Error: " + ex.ToString());
-            }
-            finally
-            {
-                con.Close();
-            }
             tsbNuevo.Enabled = true;
             tsbGuardar.Enabled = false;
             tsbCancelar.Enabled = false;
@@ -170,54 +148,50 @@ namespace Laboratorio14
             txtNombre.Text = "";
             txtPrecio.Text = "";
             txtStock.Text = "";
-
         }
 
         private void tsbBuscar_Click(object sender, EventArgs e)
         {
-            string sql = "SELECT * FROM LAPTOPS WHERE ID=" + tstId.Text;
+            string sql = "SELECT * FROM LAPTOPS WHERE id = @Id";
 
-            SqlConnection con = new SqlConnection(connectionString);
-            SqlCommand cmd = new SqlCommand();
-            cmd.CommandType = CommandType.Text;
-            SqlDataReader reader;
-            con.Open();
-
-            try
+            using (SqlConnection con = new SqlConnection(connectionString))
+            using (SqlCommand cmd = new SqlCommand(sql, con))
             {
-                reader = cmd.ExecuteReader();
-                if (reader.Read())
+                cmd.Parameters.AddWithValue("@Id", tstId.Text);
+                con.Open();
+
+                try
                 {
-                    tsbNuevo.Enabled = false;
-                    tsbGuardar.Enabled = true;
-                    tsbCancelar.Enabled = true;
-                    tsbEliminar.Enabled = true;
-                    tstId.Enabled = false;
-                    tsbBuscar.Enabled = false;
-                    txtNombre.Enabled = true;
-                    txtPrecio.Enabled = true;
-                    txtStock.Enabled = true;
-                    txtNombre.Focus();
-                    txtId.Text = reader[0].ToString();
-                    txtNombre.Text = reader[1].ToString();
-                    txtPrecio.Text = reader[2].ToString();
-                    txtStock.Text = reader[3].ToString();
-                    nuevo = false;
-
+                    SqlDataReader reader = cmd.ExecuteReader();
+                    if (reader.Read())
+                    {
+                        tsbNuevo.Enabled = false;
+                        tsbGuardar.Enabled = true;
+                        tsbCancelar.Enabled = true;
+                        tsbEliminar.Enabled = true;
+                        tstId.Enabled = false;
+                        tsbBuscar.Enabled = false;
+                        txtNombre.Enabled = true;
+                        txtPrecio.Enabled = true;
+                        txtStock.Enabled = true;
+                        txtNombre.Focus();
+                        txtId.Text = reader["id"].ToString();
+                        txtNombre.Text = reader["NOMBRE"].ToString();
+                        txtPrecio.Text = reader["PRECIO"].ToString();
+                        txtStock.Text = reader["STOCK"].ToString();
+                        nuevo = false;
+                    }
+                    else
+                    {
+                        MessageBox.Show("Ningún registro encontrado con el Id ingresado !");
+                    }
                 }
-                else
+                catch (Exception ex)
                 {
-                    MessageBox.Show("Ningun registro encontrado con el Id igresado !");
+                    MessageBox.Show("Error: " + ex.Message);
                 }
             }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Error: " + ex.Message);
-            }
-            finally
-            {
-                con.Close();
-            }
+
             tstId.Text = "";
         }
 
